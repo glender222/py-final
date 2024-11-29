@@ -1,0 +1,78 @@
+<!-- src/app/coordinador/comienzoppp/comienzoppp.component.html -->
+<p-toast></p-toast>
+<div class="container">
+  <div class="left-panel">
+    <h1 class="search-title">Practicantes</h1>
+    <div class="search-bar">
+      <div class="input-wrapper">
+        <i class="search-icon fa fa-search"></i>
+        <input
+          type="text"
+          placeholder="Buscar por empresa o línea..."
+          [(ngModel)]="searchQuery"
+          (input)="filterPracticantes()"
+        />
+      </div>
+    </div>
+
+    <ul class="practicante-list">
+      <li *ngFor="let practicante of filteredPracticantes"
+          (click)="selectPracticante(practicante)"
+          [class.selected]="practicante.id === selectedPracticante?.id">
+        <div class="avatar">{{ practicante.lineaNombre[0] }}</div>
+        <div class="details">
+          <span class="name">{{ practicante.razonSocial }}</span>
+          <span class="linea">{{ practicante.lineaNombre }}</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="no-results" *ngIf="!filteredPracticantes || filteredPracticantes.length === 0">
+      No se encontraron resultados para "{{ searchQuery }}"
+    </div>
+  </div>
+
+  <div class="right-panel" *ngIf="selectedPracticante">
+    <div class="details-container">
+      <h2>Detalles de la Práctica</h2>
+
+      <div class="actions-container">
+        <button pButton
+                label="Aprobar"
+                icon="pi pi-check"
+                class="p-button-success mr-2"
+                (click)="aprobarPracticante(selectedPracticante.id)">
+        </button>
+        <button pButton
+                label="Rechazar"
+                icon="pi pi-times"
+                class="p-button-danger"
+                (click)="rechazarPracticante(selectedPracticante.id)">
+        </button>
+      </div>
+
+
+      <div class="detail-group">
+        <h3>Información de la Empresa</h3>
+        <p><strong>Razón Social:</strong> {{ selectedPracticante.razonSocial }}</p>
+        <p><strong>RUC:</strong> {{ selectedPracticante.ruc }}</p>
+        <p><strong>Dirección:</strong> {{ selectedPracticante.direccion }}</p>
+      </div>
+
+      <div class="detail-group">
+        <h3>Área de Práctica</h3>
+        <p><strong>Nombre del Área:</strong> {{ selectedPracticante.nombreArea }}</p>
+        <p><strong>Descripción:</strong> {{ selectedPracticante.descripcionArea }}</p>
+        <p><strong>Línea:</strong> {{ selectedPracticante.lineaNombre }}</p>
+      </div>
+
+      <div class="detail-group">
+        <h3>Representante</h3>
+        <p><strong>Nombre:</strong> {{ selectedPracticante.nombreRepresentante }} {{ selectedPracticante.apellidoRepresentante }}</p>
+        <p><strong>Cargo:</strong> {{ selectedPracticante.cargoRepresentante }}</p>
+        <p><strong>Teléfono:</strong> {{ selectedPracticante.telefonoRepresentante }}</p>
+        <p><strong>Correo:</strong> {{ selectedPracticante.correoRepresentante }}</p>
+      </div>
+    </div>
+  </div>
+</div>

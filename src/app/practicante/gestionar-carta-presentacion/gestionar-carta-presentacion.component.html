@@ -1,0 +1,159 @@
+<!-- gestionar-carta-presentacion.component.html -->
+<h4 style="font-size: 1em; font-weight: bold; text-align: left; margin: 0; padding-left: 1rem; margin-top: -0rem;">
+  Gestionar carta de presentación
+</h4>
+
+<div class="button-container flex justify-content-end align-items-center mt-3 mr-4">
+  <p-button label="REGRESAR" icon="pi pi-arrow-left" styleClass="logout-button"></p-button>
+</div>
+
+<div class="filter-bar p-1 surface-50 border-round shadow-1 flex align-items-center gap-3"
+     style="width: 100%; max-width: 10000px; margin-top: 0.5rem;">
+</div>
+
+<p-toast></p-toast>
+
+<div class="flex gap-3 justify-content-start align-items-start mt-3" style="width: 100%; height: 100%;">
+  <!-- Panel Izquierdo - Lista de Cartas -->
+  <div class="surface-50 border-round shadow-2 p-3 flex flex-column gap-2"
+       style="width: 300px; height: 500px; font-size: 0.8rem;">
+    <h3 class="mb-2 mt-0" style="font-size: 1rem;">Mi Carta</h3>
+
+    <div *ngIf="cartaGuardada" class="surface-100 border-round shadow-1 p-2 flex justify-content-between align-items-center"
+         style="font-size: 0.8rem;">
+      <div>
+        <div><b>Empresa:</b> {{ cartaGuardada.razonSocial }}</div>
+        <div><b>RUC:</b> {{ cartaGuardada.ruc }}</div>
+        <div><b>Área:</b> {{ cartaGuardada.nombreArea }}</div>
+      </div>
+      <div class="circle"
+           [ngClass]="{'bg-yellow-400': cartaGuardada.estado === '1', 'bg-gray-400': cartaGuardada.estado !== '1'}"
+           style="width: 20px; height: 20px; border-radius: 50%;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel Derecho - Formulario -->
+  <div class="surface-50 border-round shadow-2 p-3 flex-1" style="height: 500px; font-size: 0.8rem;">
+    <h3 class="mb-3 mt-0" style="font-size: 1rem;">Nueva Carta</h3>
+
+    <div class="flex flex-column gap-2" style="height: calc(100% - 2rem); overflow-y: auto;">
+      <!-- Empresa y RUC -->
+      <div class="flex gap-2">
+        <div class="flex flex-column w-6">
+          <label for="razonSocial">Razón Social*</label>
+          <input id="razonSocial" type="text" pInputText [(ngModel)]="carta.razonSocial"
+                 required [ngClass]="{'ng-invalid ng-dirty': submitted && !carta.razonSocial}"
+                 style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+          <small class="field-error" *ngIf="submitted && !carta.razonSocial">
+            La razón social es requerida
+          </small>
+        </div>
+        <div class="flex flex-column w-6">
+          <label for="ruc">RUC*</label>
+          <input id="ruc" type="text" pInputText [(ngModel)]="carta.ruc"
+                 required [ngClass]="{'ng-invalid ng-dirty': submitted && !carta.ruc}"
+                 style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+          <small class="field-error" *ngIf="submitted && !carta.ruc">
+            El RUC es requerido
+          </small>
+        </div>
+      </div>
+
+      <!-- Descripción de la Empresa -->
+      <div class="flex flex-column">
+        <label for="descripcion">Descripción de la Empresa*</label>
+        <textarea id="descripcion"
+                  pInputTextarea
+                  [(ngModel)]="carta.descripcion"
+                  required
+                  [ngClass]="{'ng-invalid ng-dirty': submitted && !carta.descripcion}"
+                  style="width: 100%; height: 60px; font-size: 0.85rem; resize: none;"
+                  placeholder="Describe la actividad principal de la empresa"></textarea>
+        <small class="field-error" *ngIf="submitted && !carta.descripcion">
+          La descripción de la empresa es requerida
+        </small>
+      </div>
+
+      <!-- Dirección -->
+      <div class="flex flex-column">
+        <label for="direccion">Dirección</label>
+        <input id="direccion" type="text" pInputText [(ngModel)]="carta.direccion"
+               style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+      </div>
+
+      <!-- Área y Descripción del área -->
+      <div class="flex gap-2">
+        <div class="flex flex-column w-6">
+          <label for="nombreArea">Nombre del Área</label>
+          <input id="nombreArea" type="text" pInputText [(ngModel)]="carta.nombreArea"
+                 style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+        </div>
+        <div class="flex flex-column w-6">
+          <label for="descripcionArea">Descripción del Área</label>
+          <input id="descripcionArea" type="text" pInputText [(ngModel)]="carta.descripcionArea"
+                 style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+        </div>
+      </div>
+
+      <!-- Representante -->
+      <div class="flex gap-2">
+        <div class="flex flex-column w-6">
+          <label for="nombreRepresentante">Nombre del Representante</label>
+          <input id="nombreRepresentante" type="text" pInputText [(ngModel)]="carta.nombreRepresentante"
+                 style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+        </div>
+        <div class="flex flex-column w-6">
+          <label for="apellidoRepresentante">Apellido del Representante</label>
+          <input id="apellidoRepresentante" type="text" pInputText [(ngModel)]="carta.apellidoRepresentante"
+                 style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+        </div>
+      </div>
+
+      <!-- Cargo y Teléfono -->
+      <div class="flex gap-2">
+        <div class="flex flex-column w-6">
+          <label for="cargo">Cargo</label>
+          <input id="cargo" type="text" pInputText [(ngModel)]="carta.cargoRepresentante"
+                 style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+        </div>
+        <div class="flex flex-column w-6">
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" type="text" pInputText [(ngModel)]="carta.telefonoRepresentante"
+                 style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+        </div>
+      </div>
+
+      <!-- Correo -->
+      <div class="flex gap-2">
+        <div class="flex flex-column w-6">
+          <label for="correo">Correo electrónico</label>
+          <input id="correo" type="email" pInputText [(ngModel)]="carta.correoRepresentante"
+                 style="width: 100%; height: 30px; font-size: 0.85rem;"/>
+        </div>
+      </div>
+
+      <!-- Línea -->
+      <div class="flex flex-column">
+        <label for="nombreLinea">Línea</label>
+        <p-dropdown id="nombreLinea" [(ngModel)]="carta.nombreLinea"
+                   [options]="['REDES', 'SOFTWARE', 'SISTEMAS']"
+                   styles="width: 100%;">
+        </p-dropdown>
+      </div>
+
+      <!-- Botón de Guardar -->
+      <div class="flex justify-content-end mt-3">
+        <button pButton label="Guardar Carta" icon="pi pi-save"
+                [loading]="loading"
+                (click)="solicitarValidacion()"
+                class="p-button-success">
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading-overlay">
+  <p-progressSpinner></p-progressSpinner>
+</div>

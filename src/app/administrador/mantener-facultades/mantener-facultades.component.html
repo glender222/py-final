@@ -1,0 +1,181 @@
+<div class="card">
+    <p-tabView>
+        <!-- Tab Campus -->
+        <p-tabPanel header="Campus">
+            <p-card header="Gestión de Campus">
+                <div class="flex justify-content-end mb-3">
+                    <p-button icon="pi pi-plus"
+                             label="Nuevo Campus"
+                             (click)="showCreateDialog('campus')"
+                             styleClass="p-button-success">
+                    </p-button>
+                </div>
+
+                <p-table [value]="campusList"
+                         [paginator]="true"
+                         [rows]="campusRows"
+                         [loading]="loading.campus"
+                         [rowsPerPageOptions]="[5,10,25]"
+                         styleClass="p-datatable-striped">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 20%">ID</th>
+                            <th style="width: 60%">Sede</th>
+                            <th style="width: 20%">Acciones</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-campus>
+                        <tr>
+                            <td>{{campus.id}}</td>
+                            <td>{{campus.sede}}</td>
+                            <td>
+                                <div class="flex gap-2 justify-content-center">
+                                    <p-button icon="pi pi-pencil"
+                                             (click)="editItem(campus, 'campus')"
+                                             styleClass="p-button-warning p-button-sm"
+                                             pTooltip="Editar">
+                                    </p-button>
+                                    <p-button icon="pi pi-trash"
+                                             (click)="deleteItem(campus.id, 'campus')"
+                                             styleClass="p-button-danger p-button-sm"
+                                             pTooltip="Eliminar">
+                                    </p-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="3" class="text-center">No se encontraron campus.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-card>
+        </p-tabPanel>
+
+        <!-- Tab Facultades -->
+        <p-tabPanel header="Facultades">
+            <p-card header="Gestión de Facultades">
+                <div class="flex justify-content-end mb-3">
+                    <p-button icon="pi pi-plus"
+                             label="Nueva Facultad"
+                             (click)="showCreateDialog('facultad')"
+                             styleClass="p-button-success">
+                    </p-button>
+                </div>
+
+                <p-table [value]="facultades"
+                         [paginator]="true"
+                         [rows]="facultadRows"
+                         [loading]="loading.facultad"
+                         [rowsPerPageOptions]="[5,10,25]"
+                         styleClass="p-datatable-striped">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 15%">ID</th>
+                            <th style="width: 35%">Nombre</th>
+                            <th style="width: 30%">Campus</th>
+                            <th style="width: 20%">Acciones</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-facultad>
+                        <tr>
+                            <td>{{facultad.id}}</td>
+                            <td>{{facultad.nombre}}</td>
+                            <td>{{getCampusName(facultad.idCampus)}}</td>
+                            <td>
+                                <div class="flex gap-2 justify-content-center">
+                                    <p-button icon="pi pi-pencil"
+                                             (click)="editItem(facultad, 'facultad')"
+                                             styleClass="p-button-warning p-button-sm"
+                                             pTooltip="Editar">
+                                    </p-button>
+                                    <p-button icon="pi pi-trash"
+                                             (click)="deleteItem(facultad.id, 'facultad')"
+                                             styleClass="p-button-danger p-button-sm"
+                                             pTooltip="Eliminar">
+                                    </p-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="4" class="text-center">No se encontraron facultades.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-card>
+        </p-tabPanel>
+
+        <!-- Tab Escuelas -->
+        <p-tabPanel header="Escuelas">
+            <!-- Similar structure as Campus but for Escuelas -->
+        </p-tabPanel>
+    </p-tabView>
+</div>
+
+<p-dialog [(visible)]="displayDialog"
+          [header]="(isEditMode ? 'Editar ' : 'Crear ') + dialogMode"
+          [modal]="true"
+          (onHide)="onDialogHide()"
+          [style]="{width: '50vw', minWidth: '500px'}"
+          [maximizable]="true">
+    <div class="p-fluid">
+        <!-- Campo para sede/nombre/carrera -->
+        <div class="field mb-4">
+            <label [for]="dialogMode === 'campus' ? 'sede' : dialogMode === 'facultad' ? 'nombre' : 'carrera'" class="font-bold mb-2">
+                {{dialogMode === 'campus' ? 'Sede' : dialogMode === 'facultad' ? 'Nombre' : 'Carrera'}}
+            </label>
+            <input pInputText
+                   class="p-inputtext-lg"
+                   [id]="dialogMode === 'campus' ? 'sede' : dialogMode === 'facultad' ? 'nombre' : 'carrera'"
+                   [(ngModel)]="newItem[dialogMode === 'campus' ? 'sede' : dialogMode === 'facultad' ? 'nombre' : 'carrera']" />
+        </div>
+
+        <!-- Campo adicional para Facultad -->
+        <div class="field mb-4" *ngIf="dialogMode === 'facultad'">
+            <label for="campus" class="font-bold mb-2">Campus</label>
+            <p-dropdown id="campus"
+                       [options]="campusList"
+                       [(ngModel)]="newItem.idCampus"
+                       optionLabel="sede"
+                       optionValue="id"
+                       [filter]="true"
+                       [loading]="loading.campus"
+                       placeholder="Seleccione un campus"
+                       [showClear]="true"
+                       styleClass="p-inputtext-lg"
+                       [style]="{'width':'100%'}"
+                       [panelStyle]="{'min-width':'300px'}"
+                       appendTo="body">
+                <ng-template pTemplate="empty">
+                    <div class="p-text-center p-3">No hay campus disponibles</div>
+                </ng-template>
+                <ng-template pTemplate="loader">
+                    <div class="p-text-center p-3">Cargando campus...</div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <!-- Campo adicional para Escuela -->
+        <div class="field" *ngIf="dialogMode === 'escuela'">
+            <label for="facultad">Facultad</label>
+            <p-dropdown id="facultad"
+                       [options]="facultades"
+                       [(ngModel)]="newItem.idFacultad"
+                       optionLabel="nombre"
+                       optionValue="id"
+                       [filter]="true">
+            </p-dropdown>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancelar" icon="pi pi-times" (click)="displayDialog = false"
+                 styleClass="p-button-text"></p-button>
+        <p-button label="Guardar" icon="pi pi-check" (click)="saveNewItem()"></p-button>
+    </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
